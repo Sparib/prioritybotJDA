@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Server>
+    <Channels>
+        <Channel>
+            <id>1001</id>
+        </Channel>
+    </Channels>
+    <LockTime>1</LockTime>
+</Server>
