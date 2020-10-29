@@ -14,4 +14,5 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation 'net.dv8tion:JDA:4.2.0_203'
     compile 'io.github.cdimascio:java-dotenv:5.2.1'
+    compile files("lib/mysql-connector-java-8.0.22.jar")
 }

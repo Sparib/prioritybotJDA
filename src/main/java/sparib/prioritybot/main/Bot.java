@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import sparib.prioritybot.classes.Command;
 import sparib.prioritybot.classes.Server;
 import sparib.prioritybot.handlers.CommandHandler;
+import sparib.prioritybot.handlers.DatastoreHandler;
 import sparib.prioritybot.handlers.MessageHandler;
 import sparib.prioritybot.handlers.PriorityHandler;
 
@@ -33,7 +34,7 @@ public class Bot {
     public static PriorityHandler priorityHandler = new PriorityHandler();
 
     // Server map
-    public static Map<String, Server> servers = new HashMap<String, Server>();
+    public static Map<String, Server> servers = new HashMap<>();
 
     // Continuation for commands
     public static Command continueCommand = null;
@@ -50,6 +51,8 @@ public class Bot {
                 .addEventListeners(new MessageHandler())
                 .setActivity(Activity.watching("for pb setup"))
                 .build();
+
+        new DatastoreHandler().saveServer("Poop");
     }
 
     public static void resetContinue() {
