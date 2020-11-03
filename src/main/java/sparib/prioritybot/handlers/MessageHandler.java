@@ -21,6 +21,7 @@ public class MessageHandler extends ListenerAdapter {
 
         if (content.equalsIgnoreCase("pb unlock") || content.equals("pb ul")) {
             Bot.commandHandler.runCommand("unlock", null, message);
+            return;
         }
 
         // Check if the current channel is one that will lock

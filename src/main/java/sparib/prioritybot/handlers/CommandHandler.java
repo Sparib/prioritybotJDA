@@ -26,7 +26,6 @@ public class CommandHandler {
     }
 
     private void addCommand(String path) {
-        System.out.println(path);
         Command command = null;
         String[] pathParts = path.replace("\\", "/").split("/");
         path = "sparib.prioritybot.commands." + pathParts[pathParts.length - 1].replace(".java", "");
@@ -46,7 +45,6 @@ public class CommandHandler {
     }
 
     public void runCommand(String command, String[] args, Message message) {
-        System.out.println("Firing " + command + " command");
         if (Bot.continueCommand != null) {
             Bot.continueCommand.execute(message, args);
             return;

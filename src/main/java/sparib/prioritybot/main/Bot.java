@@ -11,7 +11,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import sparib.prioritybot.classes.Command;
 import sparib.prioritybot.classes.Server;
 import sparib.prioritybot.handlers.CommandHandler;
@@ -41,18 +43,35 @@ public class Bot {
     public static int continueState = 0;
     public static MessageChannel continueChannel = null;
 
+    // Datastore handler
+    public static DatastoreHandler datastoreHandler = new DatastoreHandler();
+
     public static void main(String[] args) throws LoginException {
         // Load dotenv and get the token
         Dotenv dotenv = Dotenv.load();
         final String token = dotenv.get("TOKEN");
+        final String SQLUser = dotenv.get("USER");
+        final String SQLPass = dotenv.get("PASS");
+
+        datastoreHandler.setConnectionURL(SQLUser, SQLPass);
 
         // Build the bot
         bot = JDABuilder.create(token, GatewayIntent.GUILD_MESSAGES)
-                .addEventListeners(new MessageHandler())
-                .setActivity(Activity.watching("for pb setup"))
+                .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOTE,
+                        CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
+                .setActivity(Activity.listening("Initialization"))
                 .build();
 
-        new DatastoreHandler().saveServer("Poop");
+        try {
+            bot.awaitReady();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        datastoreHandler.postInitializationSetup();
+
+        bot.addEventListener(new MessageHandler());
+        bot.getPresence().setActivity(Activity.watching("for pb help"));
     }
 
     public static void resetContinue() {

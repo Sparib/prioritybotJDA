@@ -78,7 +78,9 @@ public class Setup extends Command {
                 embed.setTitle("Setup Finished!").setColor(Color.GREEN)
                     .setDescription("For the bot to work correctly, you must set it to the highest role.");
                 botMessage.editMessage(embed.build()).queue();
-                Bot.servers.put(message.getGuild().getId(), new Server(time, channels));
+                Server server = new Server (time, channels);
+                Bot.servers.put(message.getGuild().getId(), server);
+                Bot.datastoreHandler.addServer(message.getGuild().getId(), server);
                 Bot.resetContinue();
                 System.out.println(Bot.servers);
                 return;
