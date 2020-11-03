@@ -43,11 +43,14 @@ public class MessageHandler extends ListenerAdapter {
         String[] array = content.split("\\s+");
 
         if (array.length > 1) {
-            String command = array[1];
-            String[] args = new String[array.length - 1];
-            System.arraycopy(array, 1, args, 0, array.length - 1);
-
             if (!array[0].equalsIgnoreCase("pb")) { return; }
+
+            String command = array[1];
+            String[] args = null;
+            if (array.length > 2) {
+                args = new String[array.length - 2];
+                System.arraycopy(array, 2, args, 0, args.length);
+            }
 
             Bot.commandHandler.runCommand(command, args, message);
             return;
