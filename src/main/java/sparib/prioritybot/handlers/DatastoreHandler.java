@@ -1,5 +1,6 @@
 package sparib.prioritybot.handlers;
 
+import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.w3c.dom.Text;
 import sparib.prioritybot.classes.Server;
@@ -9,6 +10,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DatastoreHandler {
 
@@ -103,7 +105,6 @@ public class DatastoreHandler {
         int lockTime = 0;
         String prevServer = "";
         List<TextChannel> textChannelList = new ArrayList<>();
-        int i = 0;
         while (resultSet.next()) {
             serverID = resultSet.getString("server_id");
             lockTime = resultSet.getInt("lock_time");
@@ -117,7 +118,6 @@ public class DatastoreHandler {
                 textChannelList.clear();
             }
             prevServer = serverID;
-            i++;
         }
         Server server = new Server(lockTime, new ArrayList<>(textChannelList));
         System.out.println(server.getChannels());
@@ -130,8 +130,6 @@ public class DatastoreHandler {
     public void addServer(String serverID, Server server) {
         int lockTime = server.getLockTime();
         List<TextChannel> channels = server.getChannels();
-        List<String> channelIDs = new ArrayList<>();
-        channels.forEach(c -> { channelIDs.add(c.getId()); });
 
         try {
             connection = DriverManager.getConnection(connectionURL);
@@ -153,6 +151,22 @@ public class DatastoreHandler {
                     e.printStackTrace();
                 }
             });
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+    }
+
+    public void updateLockTime(String serverID, int lockTime) {
+        try {
+            connection = DriverManager.getConnection(connectionURL);
+            preparedStatement = connection.prepareStatement("UPDATE servers " +
+                                                                "SET lock_time = ? WHERE server_id = ?");
+            preparedStatement.setInt(1, lockTime);
+            preparedStatement.setString(2, serverID);
+
+            preparedStatement.execute();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

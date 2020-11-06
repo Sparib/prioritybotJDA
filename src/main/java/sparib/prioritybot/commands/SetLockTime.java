@@ -22,7 +22,22 @@ public class SetLockTime extends Command {
     public void execute(Message message, String[] args) {
         EmbedBuilder embed;
 
-        Server server = Bot.servers.get(message.getGuild().getId());
+        Server server = null;
+        for (String s : Bot.servers.keySet()) {
+            if (s.equals(message.getGuild().getId())) {
+                server = Bot.servers.get(s);
+            }
+        }
+
+        if (server == null) {
+            embed = new EmbedBuilder()
+                    .setTitle("Error")
+                    .setDescription("This server has not been set up yet!\nUse `pb setup` to setup this server.")
+                    .setColor(Color.RED);
+            message.getChannel().sendMessage(embed.build()).queue();
+            return;
+        }
+
         if (args == null) {
             embed = new EmbedBuilder()
                     .setTitle("Lock Time")
@@ -58,6 +73,7 @@ public class SetLockTime extends Command {
             return;
         }
         server.setLockTime(newLockTime);
+        Bot.datastoreHandler.updateLockTime(message.getGuild().getId(), newLockTime);
         embed = new EmbedBuilder()
                 .setTitle("Success")
                 .setDescription(String.format("The new lock time is:\n`%d` second(s).", newLockTime))
