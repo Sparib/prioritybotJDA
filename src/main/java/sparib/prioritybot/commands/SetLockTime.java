@@ -44,9 +44,9 @@ public class SetLockTime extends Command {
                     .setDescription(String.format("The current lock time for this server is: \n`%d` second(s)", server.getLockTime()))
                     .setColor(Color.GREEN);
             message.getChannel().sendMessage(embed.build()).queue();
+            return;
         }
 
-        assert args != null;
         if (args.length > 1) {
             embed = new EmbedBuilder()
                     .setTitle("Error")
