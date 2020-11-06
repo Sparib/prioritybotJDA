@@ -26,6 +26,7 @@ public class SetLockTime extends Command {
         for (String s : Bot.servers.keySet()) {
             if (s.equals(message.getGuild().getId())) {
                 server = Bot.servers.get(s);
+                break;
             }
         }
 
