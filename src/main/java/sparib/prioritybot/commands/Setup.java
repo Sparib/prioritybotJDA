@@ -34,28 +34,33 @@ public class Setup extends Command {
     @Override
     public void execute(Message message, String[] args) {
         EmbedBuilder embed = new EmbedBuilder();
+
+        for (String s : Bot.servers.keySet()) {
+            if (s.equals(message.getGuild().getId())) {
+                embed.setTitle("Error")
+                        .setDescription("This server has already been set up!\n" +
+                                        "To change values use `pb locktime (locktime)`\n" +
+                                        "or `pb channels set`")
+                        .setColor(Color.RED);
+                message.getChannel().sendMessage(embed.build()).queue();
+                return;
+            }
+        }
+
         Message botMessage = null;
         if (!botMessageId.equals("")) {
             botMessage = message.getChannel().retrieveMessageById(botMessageId).complete();
-        }
-
-        if (botMessage == null && !botMessageId.equals("")) {
-            embed = new EmbedBuilder()
-                    .setTitle("Critical Error!")
-                    .setDescription("Please fill out this form and DM it to `Sparib#9710`\n```" +
-                                    "What command you ran:\n" +
-                                    "What you were doing beforehand:\n" +
-                                    "Time of incident (with timezone):```")
-                    .setColor(Color.getHSBColor(0f, 1f, 0.58f));
-            message.getChannel().sendMessage(embed.build()).queue();
-            return;
         }
 
         if (message.getContentRaw().equalsIgnoreCase("stop")) {
             deletePrev(message);
             Bot.continueCommand = null;
             embed.setTitle("Stopped!").setColor(Color.RED);
-            botMessage.editMessage(embed.build()).queue();
+            if (botMessage != null) {
+                botMessage.editMessage(embed.build()).queue();
+            } else {
+                message.getChannel().sendMessage(embed.build()).queue();
+            }
             return;
         }
 
@@ -68,6 +73,14 @@ public class Setup extends Command {
             Bot.continueCommand = this;
             Bot.continueState = 1;
             Bot.continueChannel = message.getChannel();
+        } else if (botMessage == null) {
+            embed.setTitle("Critical Error!")
+                    .setDescription("Please fill out this form and DM it to `Sparib#9710`\n```" +
+                            "What command you ran:\n" +
+                            "What you were doing beforehand:\n" +
+                            "Time of incident (with timezone):```")
+                    .setColor(Color.getHSBColor(0f, 1f, 0.58f));
+            message.getChannel().sendMessage(embed.build()).queue();
         } else if (Bot.continueState == 1) {
             deletePrev(message);
             String response = message.getContentRaw();
@@ -86,6 +99,15 @@ public class Setup extends Command {
             Bot.continueState = 2;
         } else if (Bot.continueState == 2) {
             if (message.getContentRaw().equalsIgnoreCase("done")) {
+                if (channels.isEmpty()) {
+                    embed.setTitle("Setup Failed!")
+                            .setDescription("You must set channels to lock!\n" +
+                                    "You can rerun the setup with `pb setup`")
+                            .setColor(Color.RED);
+                    botMessage.editMessage(embed.build()).queue();
+                    Bot.resetContinue();
+                    return;
+                }
                 deletePrev(message);
                 embed.setTitle("Setup Finished!").setColor(Color.GREEN)
                         .setDescription("For the bot to work correctly, you must set it to the highest role.");

@@ -1,11 +1,6 @@
 package sparib.prioritybot.classes;
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.w3c.dom.Text;
-import sparib.prioritybot.main.Bot;
 
 import java.util.List;
 
@@ -43,10 +38,9 @@ public class Server {
         return this.channels;
     }
 
-    public Server setLockTime(int lockTime) {
+    public void setLockTime(int lockTime) {
         this.lockTime = lockTime;
 
-        return this;
     }
 
     /**

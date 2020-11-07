@@ -1,8 +1,6 @@
 package sparib.prioritybot.handlers;
 
-import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.w3c.dom.Text;
 import sparib.prioritybot.classes.Server;
 import sparib.prioritybot.main.Bot;
 
@@ -10,7 +8,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DatastoreHandler {
 

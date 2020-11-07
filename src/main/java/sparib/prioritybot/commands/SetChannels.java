@@ -18,7 +18,7 @@ public class SetChannels extends Command {
 
     public String[] callers() { return new String[]{ "channels" }; }
 
-    private List<TextChannel> textChannels = new ArrayList<>();
+    private final List<TextChannel> textChannels = new ArrayList<>();
     private String botMessageId = "";
 
     public void execute(Message message, String[] args) {
@@ -65,11 +65,12 @@ public class SetChannels extends Command {
             }
             if (message.getContentRaw().equalsIgnoreCase("done")) {
                 if (textChannels.isEmpty()) {
-                    embed.setTitle("Setup Failed!")
+                    embed.setTitle("Set Channels Failed!")
                             .setDescription("You must set channels to lock!\n" +
-                                            "You can rerun the setup with `pb setup`")
+                                            "You can rerun the command with `pb channels set`")
                             .setColor(Color.RED);
                     message.getChannel().sendMessage(embed.build()).queue();
+                    Bot.resetContinue();
                     return;
                 }
                 server.setChannels(textChannels);
