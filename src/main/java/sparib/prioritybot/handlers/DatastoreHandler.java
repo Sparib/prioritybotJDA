@@ -120,7 +120,6 @@ public class DatastoreHandler {
             prevServer = serverID;
         }
         Server server = new Server(lockTime, new ArrayList<>(textChannelList));
-        System.out.println(server.getChannels());
         serverHashMap.put(serverID, server);
         textChannelList.clear();
 
@@ -167,6 +166,31 @@ public class DatastoreHandler {
             preparedStatement.setString(2, serverID);
 
             preparedStatement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+    }
+
+    public void updateChannels(String serverID, List<TextChannel> channels) {
+        try {
+            connection = DriverManager.getConnection(connectionURL);
+            preparedStatement = connection.prepareStatement("DELETE FROM channels WHERE server_id = ?");
+            preparedStatement.setString(1, serverID);
+            preparedStatement.execute();
+
+            preparedStatement = connection.prepareStatement("INSERT INTO channels (server_id, channel_id)" +
+                                                                "VALUES (?, ?)");
+            preparedStatement.setString(1, serverID);
+            for (TextChannel c : channels) {
+                try {
+                    preparedStatement.setString(2, c.getId());
+                    preparedStatement.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -39,6 +39,18 @@ public class Setup extends Command {
             botMessage = message.getChannel().retrieveMessageById(botMessageId).complete();
         }
 
+        if (botMessage == null && !botMessageId.equals("")) {
+            embed = new EmbedBuilder()
+                    .setTitle("Critical Error!")
+                    .setDescription("Please fill out this form and DM it to `Sparib#9710`\n```" +
+                                    "What command you ran:\n" +
+                                    "What you were doing beforehand:\n" +
+                                    "Time of incident (with timezone):```")
+                    .setColor(Color.getHSBColor(0f, 1f, 0.58f));
+            message.getChannel().sendMessage(embed.build()).queue();
+            return;
+        }
+
         if (message.getContentRaw().equalsIgnoreCase("stop")) {
             deletePrev(message);
             Bot.continueCommand = null;
@@ -76,9 +88,9 @@ public class Setup extends Command {
             if (message.getContentRaw().equalsIgnoreCase("done")) {
                 deletePrev(message);
                 embed.setTitle("Setup Finished!").setColor(Color.GREEN)
-                    .setDescription("For the bot to work correctly, you must set it to the highest role.");
+                        .setDescription("For the bot to work correctly, you must set it to the highest role.");
                 botMessage.editMessage(embed.build()).queue();
-                Server server = new Server (time, channels);
+                Server server = new Server(time, channels);
                 Bot.servers.put(message.getGuild().getId(), server);
                 Bot.datastoreHandler.addServer(message.getGuild().getId(), server);
                 Bot.resetContinue();
